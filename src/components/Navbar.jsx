@@ -27,8 +27,8 @@ return(
 </div>
 
 {/* RESUME */}
-<a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
-  Download Resume
+<a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="resume-btn" download>
+Resume
 </a>
 </div>
 
