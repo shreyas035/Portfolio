@@ -27,10 +27,9 @@ return(
 </div>
 
 {/* RESUME */}
-<a href="/SHREYAS JADHAV Resume.pdf" className="resume-btn" download>
-Resume
+<a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+  Download Resume
 </a>
-
 </div>
 
 )
