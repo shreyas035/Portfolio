@@ -1,37 +1,26 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef } from 'react';
 
-export default function ScrollProgress(){
+const ScrollProgress = () => {
+  const barRef = useRef(null);
 
-const [scroll,setScroll] = useState(0)
+  useEffect(() => {
+    const onScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      if (barRef.current) {
+        barRef.current.style.width = `${progress}%`;
+      }
+    };
 
-useEffect(()=>{
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Trigger scroll calculations initially
+    onScroll();
 
-const handleScroll = () => {
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-const totalHeight =
-document.documentElement.scrollHeight -
-document.documentElement.clientHeight
+  return <div ref={barRef} className="scroll-progress-bar" />;
+};
 
-const progress =
-(window.scrollY / totalHeight) * 100
-
-setScroll(progress)
-
-}
-
-window.addEventListener("scroll",handleScroll)
-
-return () => window.removeEventListener("scroll",handleScroll)
-
-},[])
-
-return(
-
-<div
-className="scroll-bar"
-style={{width:`${scroll}%`}}
-></div>
-
-)
-
-}
+export default ScrollProgress;

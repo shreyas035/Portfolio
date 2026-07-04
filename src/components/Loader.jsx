@@ -1,48 +1,59 @@
-import { useState, useEffect } from "react"
+import { useEffect, useRef, useState } from 'react';
 
-export default function Loader(){
+const Loader = ({ onComplete }) => {
+  const progressRef = useRef(null);
+  const loaderRef = useRef(null);
+  const [count, setCount] = useState(0);
 
-const [progress,setProgress] = useState(0)
+  useEffect(() => {
+    let currentCount = 0;
+    const duration = 1800; // 1.8 seconds loading animation
+    const intervalTime = 20;
+    const steps = duration / intervalTime;
+    const increment = 100 / steps;
 
-useEffect(()=>{
+    const timer = setInterval(() => {
+      currentCount = Math.min(currentCount + increment, 100);
+      setCount(Math.floor(currentCount));
 
-let interval = setInterval(()=>{
+      if (progressRef.current) {
+        progressRef.current.style.width = `${currentCount}%`;
+      }
 
-setProgress(prev=>{
-if(prev >= 100){
-clearInterval(interval)
-return 100
-}
-return prev + 1
-})
+      if (currentCount >= 100) {
+        clearInterval(timer);
+        setTimeout(() => {
+          if (loaderRef.current) {
+            loaderRef.current.classList.add('fade-out');
+          }
+          setTimeout(() => {
+            if (onComplete) onComplete();
+          }, 500); // match fade-out CSS duration
+        }, 200);
+      }
+    }, intervalTime);
 
-},15)
+    return () => clearInterval(timer);
+  }, [onComplete]);
 
-return () => clearInterval(interval)
+  return (
+    <div ref={loaderRef} className="loader-wrap" aria-label="Loading">
+      <div className="loader-bg" />
+      <div className="loader-content">
+        <div className="loader-logo">
+          <span className="logo-bracket">&lt;</span>
+          <span className="logo-name">SJ</span>
+          <span className="logo-bracket">/&gt;</span>
+        </div>
+        <p className="loader-tagline">Building intelligent systems...</p>
+        <div className="loader-bar-wrap">
+          <div ref={progressRef} className="loader-bar" />
+        </div>
+        <span className="loader-count">{count}%</span>
+      </div>
+      <div className="loader-grid" />
+    </div>
+  );
+};
 
-},[])
-
-return(
-
-<div className="loader-container">
-
-<div className="loader-box">
-
-<p className="loader-title">Loading Portfolio</p>
-
-<p className="loader-percent">{progress}%</p>
-
-<div className="loader-bar">
-<div 
-className="loader-fill" 
-style={{width: progress + "%"}}
-></div>
-</div>
-
-</div>
-
-</div>
-
-)
-
-}
+export default Loader;
